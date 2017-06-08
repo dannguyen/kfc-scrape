@@ -47,5 +47,29 @@ resp = requests.post(BASE_ENDPOINT, data=search_params)
 
 Calling the `.json()` method of the `resp` response object yields a Python dict that includes a list of 153 locations. You can see a cached version of that JSON at [assets/data/cached-nyc-kfc-locations.json](assets/data/cached-nyc-kfc-locations.json)
 
+### Customizing the request
+
+So it seems pretty straightforward to call the KFC locator service repeatedly, iterating over U.S. addresses, until we've covered the entirety of the United States. The most obvious optimization is to change the `distance` in the request to be bigger than `100` (miles, presumably). Changing it to `200` would reduce the number of calls needed to cover the U.S.
+
+In the snippet below, note the change of `distance` from `100` to `200`:
+
+```py
+import json
+import requests
+
+BASE_ENDPOINT = 'https://services.kfc.com/services/query/locations'
+search_params = { 'address': 'NYC', 'distance': '100', 
+                  'catering': False, 'buffet': False, 'wifi': False }
+
+resp = requests.post(BASE_ENDPOINT, data=search_params)
+```
+
+
+Let's do a quick check of the dictionary as deserialized from the `resp` object (the `total` number of results was **153** when the `distance` was set to `100`):
+
+```py
+>>> result = json.loads(resp.text)
+>>> result['total']
+```
 
 
